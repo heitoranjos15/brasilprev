@@ -18,10 +18,11 @@ from django.urls import path, include
 
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
-from .api.views import UserCreate
+from .api.views import UserCreate, ProductViewSet
 
 
 router = DefaultRouter()
+router.register('product', ProductViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
