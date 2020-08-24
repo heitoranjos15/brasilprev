@@ -27,5 +27,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth', obtain_auth_token, name='api-token'),
     path('api/', include(router.urls)),
-    path('api/register', UserCreate.as_view()),
+    path('api/register', UserCreate.as_view(), name='register'),
 ]
