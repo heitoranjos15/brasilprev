@@ -1,0 +1,10 @@
+To-Do List
+
+Cadastro
+- Clientes - Done
+- Produtos - WIP
+- Pedidos
+
+- Autenticacao - Done
+- Dockerfile
+- Deploy Heroku
