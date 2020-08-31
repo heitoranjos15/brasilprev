@@ -113,7 +113,7 @@ $ python manage.py test
 
 ## Docker build
 
-First, change the database configuration to use a more scalable database like PostgreSQL
+First, change the database configuration to use a more scalable database like PostgreSQL in *brasilprev/settings.py*
 
 ```python
 DATABASES = {
