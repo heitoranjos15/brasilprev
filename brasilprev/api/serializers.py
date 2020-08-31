@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
-from rest_framework.serializers import ModelSerializer
-from .models import Product
+from rest_framework import serializers
+from .models import Product, Order, OrderItem
 
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password', 'email')
@@ -17,7 +17,21 @@ class UserSerializer(ModelSerializer):
         return user
 
 
-class ProductSerializer(ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('name', 'width', 'depth', 'height', 'weight', 'price')
+
+
+class OrderSerializer(serializers.Serializer):
+    products = serializers.ListField(child=serializers.DictField())
+
+    def create(self, validated_data):
+        order = Order.objects.create(client_id=self.context['request'].user)
+        for item in validated_data['products']:
+            orderItem = OrderItem()
+            orderItem.order = order
+            orderItem.product = Product.objects.get(pk=item['product_id'])
+            orderItem.quantity = item['product_quantity']
+            orderItem.save()
+        return order

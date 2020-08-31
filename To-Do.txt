@@ -2,8 +2,8 @@ To-Do List
 
 Cadastro
 - Clientes - Done
-- Produtos - WIP
-- Pedidos
+- Produtos - Done
+- Pedidos - WIP
 
 - Autenticacao - Done
 - Dockerfile

@@ -1,12 +1,13 @@
 # from django.shortcuts import render
 
 # Create your views here.
+from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework import authentication
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .models import Product
-from .serializers import UserSerializer, ProductSerializer
+from .serializers import UserSerializer, ProductSerializer, OrderSerializer
 
 
 User = get_user_model()
@@ -14,8 +15,8 @@ User = get_user_model()
 
 class AuthMixin(object):
     authentication_classes = (
-        BasicAuthentication,
-        TokenAuthentication,
+        authentication.BasicAuthentication,
+        authentication.TokenAuthentication,
     )
 
 
@@ -30,5 +31,20 @@ class ProductViewSet(AuthMixin, viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = (
         IsAuthenticated,
-        IsAdminUser
+        IsAdminUser,
     )
+
+
+class OrderCreate(AuthMixin, generics.CreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request):
+        serializer = OrderSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return HttpResponse(status=201)

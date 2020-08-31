@@ -13,7 +13,10 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    client_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    client_id = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
 
 
 class OrderItem(models.Model):

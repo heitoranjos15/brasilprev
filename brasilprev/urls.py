@@ -18,7 +18,7 @@ from django.urls import path, include
 
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
-from .api.views import UserCreate, ProductViewSet
+from .api.views import UserCreate, ProductViewSet, OrderCreate
 
 
 router = DefaultRouter()
@@ -29,4 +29,5 @@ urlpatterns = [
     path('api/auth', obtain_auth_token, name='api-token'),
     path('api/', include(router.urls)),
     path('api/register', UserCreate.as_view(), name='register'),
+    path('api/order', OrderCreate.as_view(), name='order'),
 ]

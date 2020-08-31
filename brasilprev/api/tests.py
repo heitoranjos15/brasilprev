@@ -1,11 +1,13 @@
 # from django.test import TestCase
 import base64
+import json
+from random import randrange
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-
+from .models import Product
 
 User = get_user_model()
 
@@ -51,7 +53,12 @@ class ProductTests(APITestCase):
         header_data = {
             'HTTP_AUTHORIZATION': 'Basic ' + auth,
         }
-        response = self.client.post(self.url, self.payload, **header_data)
+        response = self.client.post(
+            self.url,
+            json.dumps(self.payload),
+            content_type="application/json",
+            **header_data
+        )
 
         self.assertEqual(
             response.status_code,
@@ -64,7 +71,12 @@ class ProductTests(APITestCase):
         header_data = {
             'HTTP_AUTHORIZATION': 'Basic ' + auth,
         }
-        response = self.client.post(self.url, self.payload, **header_data)
+        response = self.client.post(
+            self.url,
+            json.dumps(self.payload),
+            content_type="application/json",
+            **header_data
+        )
 
         self.assertEqual(
             response.status_code,
@@ -73,6 +85,66 @@ class ProductTests(APITestCase):
         )
 
     def test_can_add_product_without_authentication(self):
+        response = self.client.post(
+            self.url,
+            json.dumps(self.payload),
+            content_type="application/json"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+            msg='{}'.format(response.data)
+        )
+
+
+class OrderTest(APITestCase):
+    def setUp(self):
+        self.user = User(username='bogus', email='bogus@email.com')
+        self.user.set_password('123456')
+        self.user.save()
+        self.url = reverse('order')
+        for i in range(4):
+            product = Product(
+                name='item-{}'.format(i),
+                width=randrange(10, 100),
+                depth=randrange(10, 100),
+                height=randrange(20, 100),
+                weight=randrange(30, 200),
+                price=randrange(50, 200)
+            )
+            product.save()
+        self.payload = {
+            'products': [
+                {
+                    'product_id': 3,
+                    'product_quantity': 7,
+                },
+                {
+                    'product_id': 2,
+                    'product_quantity': 8
+                }
+            ]
+        }
+
+    def test_user_can_order_products(self):
+        auth = base64.b64encode('bogus:123456'.encode()).decode()
+        header_data = {
+            'HTTP_AUTHORIZATION': 'Basic ' + auth,
+        }
+        response = self.client.post(
+            self.url,
+            json.dumps(self.payload),
+            content_type="application/json",
+            **header_data
+            )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+    def test_can_order_products_without_authentication(self):
         response = self.client.post(self.url, self.payload)
 
         self.assertEqual(
